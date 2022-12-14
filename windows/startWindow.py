@@ -1,13 +1,13 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
 import sys
-
-from PyQt5.QtGui import QPixmap
-
-from position import positionAnalysis as pA
+from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class UiStartWindow(object):
     def __init__(self):
+        self.mainWindow = None
+        self.new_class = None
+        self.w = None
+        self.workWindow = None
         self.path = None
         self.exportBut = None
         self.label_2 = None
@@ -15,11 +15,12 @@ class UiStartWindow(object):
         self.centralwidget = None
         self.app = QtWidgets.QApplication(sys.argv)
         self.StartWindow = QtWidgets.QMainWindow()
+        self.pixmap = None
 
     def setup_ui(self):
         self.StartWindow.setObjectName("StartWindow")
         self.StartWindow.resize(1000, 800)
-        self.StartWindow.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
+        self.StartWindow.setStyleSheet("background-color: rgb(72, 72, 72);border-color: rgb(54, 54, 54);")
         self.centralwidget = QtWidgets.QWidget(self.StartWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
@@ -50,14 +51,15 @@ class UiStartWindow(object):
         self.exportBut.setGeometry(QtCore.QRect(720, 400, 90, 30))
         self.exportBut.setIconSize(QtCore.QSize(30, 20))
         self.exportBut.setObjectName("exportBut")
+        self.exportBut.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
         self.path = QtWidgets.QLineEdit(self.centralwidget)
         self.path.setGeometry(QtCore.QRect(300, 400, 400, 30))
         self.path.setObjectName("path")
         self.path.setPlaceholderText("Enter path")
+        self.path.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
         self.StartWindow.setCentralWidget(self.centralwidget)
         self.retranslate_ui(self.StartWindow)
         QtCore.QMetaObject.connectSlotsByName(self.StartWindow)
-
         self.add_functions()
 
     def retranslate_ui(self, StartWindow):
@@ -69,13 +71,19 @@ class UiStartWindow(object):
 
     def show_window(self):
         self.StartWindow.show()
-        sys.exit(self.app.exec_())
 
     def add_functions(self):
         self.path.returnPressed.connect(self.get_path)
         self.exportBut.clicked.connect(self.get_path)
 
+    def set_main_window(self, window):
+        self.mainWindow = window
+
+    def close(self):
+        self.StartWindow.close()
+
     def get_path(self):
-        position = pA.PositionAnalysis(self.path.text())
-        position.work()
+        # self.StartWindow.close()
+        self.mainWindow.show_window_2(self.path.text())
+
 
