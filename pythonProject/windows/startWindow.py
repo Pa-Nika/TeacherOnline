@@ -1,10 +1,14 @@
 import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
+from windows import window
+from windows import workWindow as wW
 
 
-class UiStartWindow(object):
+class UiStartWindow(window.Window):
     def __init__(self):
-        self.mainWindow = None
+        super().__init__()
+        self.work_window = None
+        self.observer = None
         self.new_class = None
         self.w = None
         self.workWindow = None
@@ -76,14 +80,13 @@ class UiStartWindow(object):
         self.path.returnPressed.connect(self.get_path)
         self.exportBut.clicked.connect(self.get_path)
 
-    def set_main_window(self, window):
-        self.mainWindow = window
+    def set_main_window(self, window_):
+        self.observer = window_
 
     def close(self):
         self.StartWindow.close()
 
     def get_path(self):
-        # self.StartWindow.close()
-        self.mainWindow.show_window_2(self.path.text())
-
+        self.work_window = wW.UiWorkWindow(self.path.text())
+        self.observer.set_new_window(self.work_window)
 

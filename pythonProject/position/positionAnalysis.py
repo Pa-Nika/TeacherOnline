@@ -9,18 +9,16 @@ height = 220
 
 class PositionAnalysis(object):
     def __init__(self, path, text_edit, frame):
-        self.workWindow = None
+        self.work_window = None
         self.pixmap = None
         self.path = path
         self.textEdit = text_edit
         self.frameWindow = frame
 
     def set_work_window(self, window):
-        self.workWindow = window
+        self.work_window = window
 
     def work(self):
-        flag = True
-
         # Подключение детектора, настроенного на поиск человеческих лиц
         detector = dlib.get_frontal_face_detector()
         predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
@@ -73,6 +71,7 @@ class PositionAnalysis(object):
                 y_16 = landmarks.part(16).y
                 cv2.circle(frame, (x_16, y_16), 3, (255, 0, 0), -1)
 
+                print("1")
                 if y_9 > height * 0.75:
                     self.textEdit.setText("Голова слишком низко")
                 elif y_27 < height * 0.25:
@@ -91,13 +90,15 @@ class PositionAnalysis(object):
             # self.pixmap = QtGui.QPixmap('background2.png')
             # self.frameWindow.setPixmap(self.pixmap)
             cv2.imwrite('cam.png', frame)
-            self.workWindow.set_frame('cam.png')
+            self.work_window.set_frame('cam.png')
 
             # cv2.imshow("Frame", frame)
             key = cv2.waitKey(2)
             if key == 27:
+                self.work_window.close()
                 break
 
         cap.release()
         cv2.destroyAllWindows()
+        # self.workWindow.close()
 

@@ -1,10 +1,14 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from position import positionAnalysis as pA
 import sys
+from windows import window
 
 
-class UiWorkWindow(object):
+class UiWorkWindow(window.Window):
     def __init__(self, path):
+        super().__init__()
+        self.observer = None
+        self.position = None
         self.label = None
         self.frame = None
         self.textEdit = None
@@ -49,11 +53,20 @@ class UiWorkWindow(object):
         self.workWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label.setText(_translate("MainWindow", "Position in the frame"))
 
+    def set_main_window(self, window_):
+        self.observer = window_
+
     def show_window(self):
+        self.position = pA.PositionAnalysis(self.path, self.textEdit, self.frame)
+        self.position.set_work_window(self)
         self.workWindow.show()
+        # self.pixmap = QtGui.QPixmap('wait.png')
+        # self.frame.setPixmap(self.pixmap)
+        self.work()
 
     def work(self):
-        position = pA.PositionAnalysis(self.path, self.textEdit, self.frame)
-        position.set_work_window(self)
-        position.work()
+        self.position.work()
+
+    def close(self):
+        self.workWindow.close()
 
