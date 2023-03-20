@@ -1,25 +1,34 @@
-import sys
+import cv2
 from PyQt5 import QtCore, QtGui, QtWidgets
-from windows import window
+from PyQt5.QtWidgets import QMainWindow
+
+from windows import abstractWindow
 from windows import workWindow as wW
+from windows.onlineDialog import MyDialog
+
+# Константы
+width = 330
+height = 220
 
 
-class UiStartWindow(window.Window):
+class UiStartWindow(abstractWindow.Window, QMainWindow):
     def __init__(self):
         super().__init__()
+        self.online_but = None
         self.work_window = None
         self.observer = None
         self.new_class = None
         self.w = None
         self.workWindow = None
         self.path = None
-        self.exportBut = None
+        self.export_but = None
         self.label_2 = None
         self.label = None
         self.centralwidget = None
-        self.app = QtWidgets.QApplication(sys.argv)
+        self.app = None
         self.StartWindow = QtWidgets.QMainWindow()
         self.pixmap = None
+        self.dialog = None
 
     def setup_ui(self):
         self.StartWindow.setObjectName("StartWindow")
@@ -51,11 +60,16 @@ class UiStartWindow(window.Window):
         self.label_2.setWordWrap(False)
         self.label_2.setMargin(20)
         self.label_2.setObjectName("label_2")
-        self.exportBut = QtWidgets.QPushButton(self.centralwidget)
-        self.exportBut.setGeometry(QtCore.QRect(720, 400, 90, 30))
-        self.exportBut.setIconSize(QtCore.QSize(30, 20))
-        self.exportBut.setObjectName("exportBut")
-        self.exportBut.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
+        self.export_but = QtWidgets.QPushButton(self.centralwidget)
+        self.export_but.setGeometry(QtCore.QRect(720, 400, 90, 30))
+        self.export_but.setIconSize(QtCore.QSize(30, 20))
+        self.export_but.setObjectName("export_but")
+        self.export_but.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
+        self.online_but = QtWidgets.QPushButton(self.centralwidget)
+        self.online_but.setGeometry(QtCore.QRect(470, 475, 90, 30))
+        self.online_but.setIconSize(QtCore.QSize(60, 20))
+        self.online_but.setObjectName("online_but")
+        self.online_but.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
         self.path = QtWidgets.QLineEdit(self.centralwidget)
         self.path.setGeometry(QtCore.QRect(300, 400, 400, 30))
         self.path.setObjectName("path")
@@ -71,14 +85,16 @@ class UiStartWindow(window.Window):
         StartWindow.setWindowTitle(_translate("StartWindow", "Teacher Online"))
         self.label.setText(_translate("StartWindow", "Teacher Online"))
         self.label_2.setText(_translate("StartWindow", "Enter path to your video"))
-        self.exportBut.setText(_translate("StartWindow", "Export"))
+        self.export_but.setText(_translate("StartWindow", "Export"))
+        self.online_but.setText(_translate("StartWindow", "Online"))
 
     def show_window(self):
         self.StartWindow.show()
 
     def add_functions(self):
         self.path.returnPressed.connect(self.get_path)
-        self.exportBut.clicked.connect(self.get_path)
+        self.export_but.clicked.connect(self.get_path)
+        self.online_but.clicked.connect(self.dialog_online_window)
 
     def set_main_window(self, window_):
         self.observer = window_
@@ -86,7 +102,17 @@ class UiStartWindow(window.Window):
     def close(self):
         self.StartWindow.close()
 
+    def work(self):
+        pass
+
     def get_path(self):
         self.work_window = wW.UiWorkWindow(self.path.text())
         self.observer.set_new_window(self.work_window)
 
+    def set_application(self, application):
+        self.app = application
+
+    def dialog_online_window(self):
+        self.dialog = MyDialog()
+        self.dialog.show()
+        self.dialog.show_video()

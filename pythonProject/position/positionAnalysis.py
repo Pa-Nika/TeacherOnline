@@ -14,15 +14,18 @@ class PositionAnalysis(object):
         self.path = path
         self.textEdit = text_edit
         self.frameWindow = frame
+        # self.detector = dlib.get_frontal_face_detector()
+        # self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
     def set_work_window(self, window):
         self.work_window = window
 
-    def work(self):
+    def work(self, detector, predictor):
         # Подключение детектора, настроенного на поиск человеческих лиц
         detector = dlib.get_frontal_face_detector()
         predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
         cap = cv2.VideoCapture(self.path)
+        print("after")
 
         while cap.isOpened():
             flag, frame = cap.read()
@@ -87,15 +90,13 @@ class PositionAnalysis(object):
                 else:
                     self.textEdit.setText("Все хорошо!")
 
-            # self.pixmap = QtGui.QPixmap('background2.png')
-            # self.frameWindow.setPixmap(self.pixmap)
             cv2.imwrite('cam.png', frame)
             self.work_window.set_frame('cam.png')
 
             # cv2.imshow("Frame", frame)
             key = cv2.waitKey(2)
-            if key == 27:
-                self.work_window.close()
+            if key == 27 or self.work_window is None:
+                # self.work_window.close()
                 break
 
         cap.release()

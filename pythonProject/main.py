@@ -1,18 +1,18 @@
 import sys
 from windows import startWindow as sW
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 from windows import observer as obs
 
 
 def application():
     app = QApplication(sys.argv)
     start_window = sW.UiStartWindow()
-    window = obs.Observer()
+    window = obs.Observer(app)
     window.set_new_window(start_window)
     sys.exit(app.exec_())
 
 
-if __name__ == "__main__":   # Если вызываем этот файл в качестве главного файла
+if __name__ == "__main__":  # Если вызываем этот файл в качестве главного файла
     application()
 
 # pyuic5 -x workWindow.ui -o workWindow.py
