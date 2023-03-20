@@ -1,7 +1,6 @@
 import cv2
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtWidgets import QDialog, QMessageBox
-
+from PyQt5.QtWidgets import QDialog
 
 # Константы
 width = 330
@@ -15,6 +14,7 @@ class UiOnlineDialog(QDialog):
         self.frame = None
         self.label = None
         self.buttonBox = None
+        self.start_window = None
 
     def setupUi(self, window):
         window.setObjectName("window")
@@ -23,7 +23,7 @@ class UiOnlineDialog(QDialog):
         self.buttonBox.setGeometry(QtCore.QRect(120, 300, 200, 32))
         self.buttonBox.setStyleSheet("background-color: rgb(255, 255, 255);")
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel | QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.label = QtWidgets.QLabel(window)
         self.label.setGeometry(QtCore.QRect(25, 10, 401, 51))
@@ -34,8 +34,8 @@ class UiOnlineDialog(QDialog):
         self.frame.setObjectName("frame")
 
         self.retranslateUi(window)
-        self.buttonBox.accepted.connect(window.accept) # type: ignore
-        self.buttonBox.rejected.connect(window.reject) # type: ignore
+        self.buttonBox.accepted.connect(window.accept)  # type: ignore
+        self.buttonBox.rejected.connect(window.reject)  # type: ignore
         QtCore.QMetaObject.connectSlotsByName(window)
 
     def retranslateUi(self, window):
@@ -44,18 +44,15 @@ class UiOnlineDialog(QDialog):
         self.label.setText(_translate("window", "Убедитесь, что Вы сидите ровно перед камерой"))
         self.frame.setText(_translate("window", ""))
 
-    # def closeEvent(self, event):
-    #     print("AAAA")
-    #     # Переопределить colseEvent
-    #     reply = QMessageBox.question\
-    #         (self, 'Вы нажали на крестик',
-    #          "Вы уверены, что хотите уйти?",
-    #          QMessageBox.Yes,
-    #          QMessageBox.No)
-    #     if reply == QMessageBox.Yes:
-    #         event.accept()
-    #     else:
-    #         event.ignore()
+    def accept(self):
+        print("OK")
+        self.start_window.online_finish()
+
+    def reject(self):
+        print("Cansel!")
+
+    def set_start_window(self, start_window):
+        self.start_window = start_window
 
 
 class MyDialog(UiOnlineDialog):
@@ -66,7 +63,6 @@ class MyDialog(UiOnlineDialog):
 
     def show_video(self):
         self.cap = cv2.VideoCapture(0)
-        print("cap")
 
         while True:
             flag, frame = self.cap.read()
@@ -76,6 +72,12 @@ class MyDialog(UiOnlineDialog):
 
             dim = (width, height)
             frame = cv2.resize(frame, dim)
+            frame = cv2.flip(frame, 1)
+            cv2.rectangle(frame,
+                          (round(width / 3), round(height * 0.09)),
+                          (round(width * 2 / 3), round(height * 0.7)),
+                          (0, 0, 255),
+                          2)
             cv2.imwrite('cam.png', frame)
 
             self.pixmap = QtGui.QPixmap('cam.png')
@@ -90,3 +92,8 @@ class MyDialog(UiOnlineDialog):
     def closeEvent(self, event):
         self.cap.release()
         cv2.destroyAllWindows()
+
+    def hand_finish(self):
+        self.cap.release()
+        cv2.destroyAllWindows()
+        self.close()

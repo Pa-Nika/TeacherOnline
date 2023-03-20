@@ -14,6 +14,7 @@ class PositionAnalysis(object):
         self.path = path
         self.textEdit = text_edit
         self.frameWindow = frame
+
         # self.detector = dlib.get_frontal_face_detector()
         # self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
 
@@ -28,6 +29,7 @@ class PositionAnalysis(object):
         print("after")
 
         while cap.isOpened():
+            print("Here")
             flag, frame = cap.read()
 
             if not flag:

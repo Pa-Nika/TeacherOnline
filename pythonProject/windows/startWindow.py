@@ -106,7 +106,11 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
         pass
 
     def get_path(self):
-        self.work_window = wW.UiWorkWindow(self.path.text())
+        if self.path.text() != "":
+            self.work_window = wW.UiWorkWindow(self.path.text())
+        else:
+            self.work_window = wW.UiWorkWindow("0")
+
         self.observer.set_new_window(self.work_window)
 
     def set_application(self, application):
@@ -114,5 +118,10 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
 
     def dialog_online_window(self):
         self.dialog = MyDialog()
+        self.dialog.set_start_window(self)
         self.dialog.show()
         self.dialog.show_video()
+
+    def online_finish(self):
+        self.dialog.hand_finish()
+        self.get_path()

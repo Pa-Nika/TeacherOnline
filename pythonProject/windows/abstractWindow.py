@@ -29,16 +29,3 @@ class Window(QMainWindow):
     @abstractmethod
     def set_application(self, application):
         pass
-
-    # def closeEvent(self, event):
-        # print("AAAA")
-        # # Переопределить colseEvent
-        # reply = QMessageBox.question\
-        #     (self, 'Вы нажали на крестик',
-        #      "Вы уверены, что хотите уйти?",
-        #      QMessageBox.Yes,
-        #      QMessageBox.No)
-        # if reply == QMessageBox.Yes:
-        #     event.accept()
-        # else:
-        #     event.ignore()

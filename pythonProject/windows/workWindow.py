@@ -1,4 +1,3 @@
-import sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMessageBox
 
@@ -80,21 +79,8 @@ class UiWorkWindow(abstractWindow.Window):
         self.position.work(self.detector, self.predictor)
 
     def close(self):
-        print("close work window!!!!!!!!!!")
         self.workWindow.close()
 
     def set_application(self, application):
         self.app = application
 
-    def closeEvent(self, event):
-        print("AAAA")
-        # Переопределить colseEvent
-        reply = QMessageBox.question\
-            (self, 'Вы нажали на крестик',
-             "Вы уверены, что хотите уйти?",
-             QMessageBox.Yes,
-             QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            event.accept()
-        else:
-            event.ignore()

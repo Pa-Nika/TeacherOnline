@@ -18,3 +18,19 @@ if __name__ == "__main__":  # Если вызываем этот файл в к�
 # pyuic5 -x workWindow.ui -o workWindow.py
 # C:\!Папка Вероники\Учеба\Практика\video\My_video.mp4
 # C:\!Папка Вероники\Учеба\Практика\video\Test_video.mp4
+
+
+
+
+    # def closeEvent(self, event):
+    #     print("AAAA")
+    #     # Переопределить colseEvent
+    #     reply = QMessageBox.question\
+    #         (self, 'Вы нажали на крестик',
+    #          "Вы уверены, что хотите уйти?",
+    #          QMessageBox.Yes,
+    #          QMessageBox.No)
+    #     if reply == QMessageBox.Yes:
+    #         event.accept()
+    #     else:
+    #         event.ignore()
