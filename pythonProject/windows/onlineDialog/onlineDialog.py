@@ -1,5 +1,4 @@
-import cv2
-from PyQt5 import QtCore, QtWidgets, QtGui
+from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QDialog
 
 # Константы
@@ -45,55 +44,10 @@ class UiOnlineDialog(QDialog):
         self.frame.setText(_translate("window", ""))
 
     def accept(self):
-        print("OK")
         self.start_window.online_finish()
 
     def reject(self):
-        print("Cansel!")
+        self.start_window.online_cancel()
 
     def set_start_window(self, start_window):
         self.start_window = start_window
-
-
-class MyDialog(UiOnlineDialog):
-    def __init__(self):
-        super().__init__()
-        self.setupUi(self)
-        self.cap = None
-
-    def show_video(self):
-        self.cap = cv2.VideoCapture(0)
-
-        while True:
-            flag, frame = self.cap.read()
-
-            if not flag:
-                break
-
-            dim = (width, height)
-            frame = cv2.resize(frame, dim)
-            frame = cv2.flip(frame, 1)
-            cv2.rectangle(frame,
-                          (round(width / 3), round(height * 0.09)),
-                          (round(width * 2 / 3), round(height * 0.7)),
-                          (0, 0, 255),
-                          2)
-            cv2.imwrite('cam.png', frame)
-
-            self.pixmap = QtGui.QPixmap('cam.png')
-            self.frame.setPixmap(self.pixmap)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.cap.release()
-        cv2.destroyAllWindows()
-
-    def closeEvent(self, event):
-        self.cap.release()
-        cv2.destroyAllWindows()
-
-    def hand_finish(self):
-        self.cap.release()
-        cv2.destroyAllWindows()
-        self.close()

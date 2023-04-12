@@ -15,9 +15,13 @@ def application():
 if __name__ == "__main__":  # Если вызываем этот файл в качестве главного файла
     application()
 
+
+
+
 # pyuic5 -x workWindow.ui -o workWindow.py
 # C:\!Папка Вероники\Учеба\Практика\video\My_video.mp4
 # C:\!Папка Вероники\Учеба\Практика\video\Test_video.mp4
+# C:\Users\verun\PycharmProjects\My_video_long.mp4
 
 
 

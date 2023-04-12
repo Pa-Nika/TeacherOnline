@@ -1,6 +1,7 @@
 import cv2
 import dlib
-from PyQt5.uic.properties import QtGui
+import pandas as pd
+
 
 # Константы
 width = 330
@@ -8,30 +9,35 @@ height = 220
 
 
 class PositionAnalysis(object):
-    def __init__(self, path, text_edit, frame):
-        self.work_window = None
+    def __init__(self, path):
+        self.predictor = None
+        self.detector = None
+        self.loading_dialog = None
         self.pixmap = None
         self.path = path
-        self.textEdit = text_edit
-        self.frameWindow = frame
+        self.df = None
 
-        # self.detector = dlib.get_frontal_face_detector()
-        # self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    def set_loading_dialog(self, loading):
+        self.loading_dialog = loading
 
-    def set_work_window(self, window):
-        self.work_window = window
+    def csv_creator(self):
+        points = ['left1', 'left2', 'up1', 'up2', 'right1', 'right2', 'lower1', 'lower2']
+        self.df = pd.DataFrame(columns=points)
 
-    def work(self, detector, predictor):
+    def work(self):
         # Подключение детектора, настроенного на поиск человеческих лиц
-        detector = dlib.get_frontal_face_detector()
-        predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+        self.csv_creator()
+        self.detector = dlib.get_frontal_face_detector()
+        self.predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
         cap = cv2.VideoCapture(self.path)
-        print("after")
+
+        frame_number = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        count_for_one_percent = round(frame_number / 100) - 1
+        count_frame_in_while = 0
 
         while cap.isOpened():
-            print("Here")
             flag, frame = cap.read()
-
             if not flag:
                 break
 
@@ -40,12 +46,12 @@ class PositionAnalysis(object):
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
             # Проверяем количество лиц на изображении
-            faces = detector(gray)
+            faces = self.detector(gray)
             if len(faces) > 1:
-                self.textEdit.setText("Много людей в кадре!")
+                # self.textEdit.setText("Много людей в кадре!")
                 flag = False
             elif len(faces) == 0:
-                self.textEdit.setText("Невозможно разобрать лицо!")
+                # self.textEdit.setText("Невозможно разобрать лицо!")
                 flag = False
 
             for face in faces:
@@ -54,7 +60,7 @@ class PositionAnalysis(object):
                     continue
 
                 # Получение координат контрольных точек и их построение на изображении
-                landmarks = predictor(gray, face)
+                landmarks = self.predictor(gray, face)
 
                 # нижняя точка
                 x_9 = landmarks.part(8).x
@@ -76,32 +82,34 @@ class PositionAnalysis(object):
                 y_16 = landmarks.part(16).y
                 cv2.circle(frame, (x_16, y_16), 3, (255, 0, 0), -1)
 
-                print("1")
-                if y_9 > height * 0.75:
-                    self.textEdit.setText("Голова слишком низко")
-                elif y_27 < height * 0.25:
-                    self.textEdit.setText("Голова слишком высоко")
-                elif x_0 < width * 0.25:
-                    self.textEdit.setText("Голова слишком слева")
-                elif x_16 > width * 0.75:
-                    self.textEdit.setText("Голова слишком справа")
-                elif abs(x_27 - x_0) < width * 0.05:
-                    self.textEdit.setText("Голова повернута влево")
-                elif abs(x_27 - x_16) < width * 0.05:
-                    self.textEdit.setText("Голова повернута вправо")
-                else:
-                    self.textEdit.setText("Все хорошо!")
+                self.df.loc[len(self.df.index)] = [x_0, y_0, x_27, y_27, x_16, y_16, x_9, y_9]
+
+                # if y_9 > height * 0.75:
+                #     self.textEdit.setText("Голова слишком низко")
+                # elif y_27 < height * 0.25:
+                #     self.textEdit.setText("Голова слишком высоко")
+                # elif x_0 < width * 0.25:
+                #     self.textEdit.setText("Голова слишком слева")
+                # elif x_16 > width * 0.75:
+                #     self.textEdit.setText("Голова слишком справа")
+                # elif abs(x_27 - x_0) < width * 0.05:
+                #     self.textEdit.setText("Голова повернута влево")
+                # elif abs(x_27 - x_16) < width * 0.05:
+                #     self.textEdit.setText("Голова повернута вправо")
+                # else:
+                #     self.textEdit.setText("Все хорошо!")
+            count_frame_in_while += 1
+            if count_frame_in_while == count_for_one_percent:
+                self.loading_dialog.my_event()
+                count_frame_in_while = 0
 
             cv2.imwrite('cam.png', frame)
-            self.work_window.set_frame('cam.png')
-
-            # cv2.imshow("Frame", frame)
+            # self.loading_dialog.set_frame('cam.png')
             key = cv2.waitKey(2)
-            if key == 27 or self.work_window is None:
+            if key == 27 or self.loading_dialog is None:
                 # self.work_window.close()
                 break
 
         cap.release()
         cv2.destroyAllWindows()
-        # self.workWindow.close()
-
+        self.df.to_csv(r'my_data.csv', index=False)

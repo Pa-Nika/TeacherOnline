@@ -76,7 +76,7 @@ class UiWorkWindow(abstractWindow.Window):
         self.workWindow.show()
 
     def work(self):
-        self.position.work(self.detector, self.predictor)
+        self.position.work()
 
     def close(self):
         self.workWindow.close()
