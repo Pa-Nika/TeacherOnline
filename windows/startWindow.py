@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
+
+from visualization import graphWindow
 from windows import abstractWindow
 from windows.loadingDialog.myLoadingDialog import MyLoadingDialog
 from windows.onlineDialog.myOnlineDialog import MyOnlineDialog
@@ -13,6 +15,7 @@ height = 220
 class UiStartWindow(abstractWindow.Window, QMainWindow):
     def __init__(self):
         super().__init__()
+        self.graph_window = None
         self.label_loading = None
         self.loading = None
         self.online_but = None
@@ -119,6 +122,8 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
             self.loading.set_start_window(self)
             self.loading.step_analysis()
 
+        self.graph_window = graphWindow.UiGraphWindow()
+        self.observer.set_new_window(self.graph_window)
         # if self.path.text() != "":
         #     self.work_window = wW.UiWorkWindow(self.path.text())
         # else:

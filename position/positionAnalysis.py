@@ -1,7 +1,6 @@
 import cv2
 import dlib
 import pandas as pd
-from visualization import graph
 
 # Константы
 width = 330
@@ -37,13 +36,12 @@ class PositionAnalysis(object):
 
         cap = cv2.VideoCapture(self.path)
         frame_number = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        count_for_one_percent = round(frame_number / 100) - 1
+        count_for_one_percent = round(frame_number / 97)
         count_frame_in_while = 0
 
         # and self.flag_is_stop_pressed is True
 
         while cap.isOpened():
-
             flag, frame = cap.read()
             if not flag:
                 break
@@ -128,5 +126,6 @@ class PositionAnalysis(object):
         cv2.destroyAllWindows()
         # if self.flag_is_stop_pressed is True:
         self.df.to_csv(r'my_data.csv', index=False)
+        self.loading_dialog.my_event()
         self.df_diff.to_csv(r'square_diff.csv', index=False)
-        obj_graph = graph.Graph(self.df_diff)
+        self.loading_dialog.my_event()
