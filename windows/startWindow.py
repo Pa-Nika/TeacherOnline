@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QFileDialog
 
 from visualization import graphWindow
 from windows import abstractWindow
@@ -15,6 +15,7 @@ height = 220
 class UiStartWindow(abstractWindow.Window, QMainWindow):
     def __init__(self):
         super().__init__()
+        self.path_but = None
         self.graph_window = None
         self.label_loading = None
         self.loading = None
@@ -66,11 +67,19 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
         self.label_2.setWordWrap(False)
         self.label_2.setMargin(20)
         self.label_2.setObjectName("label_2")
+
         self.export_but = QtWidgets.QPushButton(self.centralWidget)
-        self.export_but.setGeometry(QtCore.QRect(720, 400, 90, 30))
+        self.export_but.setGeometry(QtCore.QRect(730, 400, 90, 30))
         self.export_but.setIconSize(QtCore.QSize(30, 20))
         self.export_but.setObjectName("export_but")
         self.export_but.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
+
+        self.path_but = QtWidgets.QPushButton(self.centralWidget)
+        self.path_but.setGeometry(QtCore.QRect(700, 400, 30, 30))
+        self.path_but.setIconSize(QtCore.QSize(30, 20))
+        self.path_but.setObjectName("path")
+        self.path_but.setStyleSheet("background-color: rgb(255, 255, 255);border-color: rgb(54, 54, 54);")
+
         self.online_but = QtWidgets.QPushButton(self.centralWidget)
         self.online_but.setGeometry(QtCore.QRect(470, 475, 90, 30))
         self.online_but.setIconSize(QtCore.QSize(60, 20))
@@ -92,6 +101,7 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
         self.label.setText(_translate("StartWindow", "Teacher Online"))
         self.label_2.setText(_translate("StartWindow", "Enter path to your video"))
         self.export_but.setText(_translate("StartWindow", "Export"))
+        self.path_but.setText(_translate("StartWindow", "[]"))
         self.online_but.setText(_translate("StartWindow", "Online"))
 
     def show_window(self):
@@ -100,6 +110,7 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
     def add_functions(self):
         self.path.returnPressed.connect(self.get_path)
         self.export_but.clicked.connect(self.get_path)
+        self.path_but.clicked.connect(self.get_explorer_path)
         self.online_but.clicked.connect(self.dialog_online_window_start)
 
     def set_main_window(self, window_):
@@ -114,6 +125,10 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
     def show_loading(self):
         self.loading.show()
 
+    def get_explorer_path(self):
+        path = QFileDialog.getOpenFileName(filter="mp4 (*.mp4)")[0]
+        self.path.setText(path)
+
     def get_path(self):
         if self.path.text() != "":
             self.loading = MyLoadingDialog(self.path.text(), self)
@@ -121,6 +136,13 @@ class UiStartWindow(abstractWindow.Window, QMainWindow):
             self.path.setPlaceholderText("Enter path")
             self.loading.set_start_window(self)
             self.loading.step_analysis()
+        # else:
+        #     path = QFileDialog.getOpenFileName(filter="mp4 (*.mp4)")[0]
+        #     self.loading = MyLoadingDialog(path, self)
+        #     self.path.setText("")
+        #     self.path.setPlaceholderText("Enter path")
+        #     self.loading.set_start_window(self)
+        #     self.loading.step_analysis()
 
         self.graph_window = graphWindow.UiGraphWindow()
         self.observer.set_new_window(self.graph_window)

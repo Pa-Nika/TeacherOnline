@@ -1,5 +1,13 @@
+import matplotlib
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QMainWindow
+import pandas as pd
+import plotly.graph_objects as go
+import matplotlib.pyplot as plt
+matplotlib.use('Qt5Agg')
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
+from matplotlib.figure import Figure
 
 from windows import abstractWindow
 
@@ -50,7 +58,17 @@ class UiGraphWindow(abstractWindow.Window, QMainWindow):
         self.Window.close()
 
     def work(self):
-        pass
+        df = pd.read_csv('square_diff.csv')
+        hist = go.Histogram(x=df['max'])
+        fig = go.Figure(data=hist)
+        fig.update_layout(
+            width=330,  # задаем размер графика
+            height=220,
+            xaxis_title='кадр',
+            yaxis_title='квадрат ошибки положения в кадре'
+        )
+
+        # self.graph_widget.canvas.draw()
 
     def set_application(self, application):
         self.app = application
