@@ -1,6 +1,6 @@
 import sys
 from windows import startWindow as sW
-from PyQt5.QtWidgets import QApplication, QMessageBox
+from PyQt5.QtWidgets import QApplication
 from windows import observer as obs
 
 
